@@ -1,9 +1,4 @@
-#!/bin/sh
-# todo -USR1 reload rules
-# todo C rewrite
-# zsh completions
-# examples in /usr/share/doc/omisu
-# mkfifo secure mask
+#!/bin/bash
 
 msg_help() { echo \
 "Usage:
