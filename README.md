@@ -5,11 +5,13 @@
 
 Simple event handler for desktop notifications.
 
-<!-- <a href="https://github.com/dylanaraps/fff/releases"><img src="https://img.shields.io/github/release/dylanaraps/fff.svg"></a>
+<!-- <a href="https://github.com/Sife-ops/omisu/releases"><img src="https://img.shields.io/github/release/Sife-ops/omisu.svg"></a>
 -->
 
-- Features...
+<!--
+- create events using filters
 - ... and many more!
+-->
 
 
 ## Table of Contents
@@ -25,32 +27,33 @@ Simple event handler for desktop notifications.
 
 ## Dependencies
 
-- `bash ?.?+`
+- `bash`
 - `inotify-tools`
-- `jq` & `gron`
-    - JSON processing.
+    - inotify interface
+- `jq` and `gron`
+    - JSON processing
 
 
 ## Installation
 
 <!--
 ### Linux
-
-- Arch Linux: `sudo make install`
+- Arch Linux: `yay omisu`
 -->
+
 
 ### Manual
 
 1. Download `omisu`.
-    - Release: https://github.com/Sife-ops/omisu/releases/latest
+<!-- Release: https://github.com/Sife-ops/omisu/releases/latest -->
     - Git: `git clone https://github.com/Sife-ops/omisu`
-2. Change working directory to `fff`.
+2. Change working directory to `omisu`.
     - `cd omisu`
 3. Run `make install` inside the script directory to install the script.
     - **Arch Linux**: `make install`
     - **NOTE**: You may have to run this as root.
 
-**NOTE:** `omisu` can be uninstalled easily using `make uninstall`. This removes all of files from your system.
+**NOTE:** `omisu` can be uninstalled easily using `make uninstall`. This removes all files from your system.
 
 
 ## Usage
