@@ -1,0 +1,70 @@
+#!/bin/sh
+# todo -USR1 reload rules
+# todo C rewrite
+# zsh completions
+# examples in /usr/share/doc/omisu
+# mkfifo secure mask
+
+msg_help() { echo \
+"Usage:
+    omisu [OPTION]...
+
+Options:
+    -r rulesfile    Use an alternative rules file.
+    -i notifsfile   Use an alternative notifications file.
+    -h              Show this message."
+}
+
+while getopts "r:i:h" o; do
+    case "${o}" in
+        r) RULES="$OPTARG" ;;
+        i) NOTIFS="$OPTARG" ;;
+        h) msg_help && exit 0 ;;
+        *) msg_help && exit 1 ;;
+    esac
+done
+
+[ -z $RULES ] \
+    && rules=$(cat ${XDG_CONFIG_HOME:-$HOME/.config}/omisu/rules.json) \
+    || rules=$(cat $RULES)
+
+[ -z $NOTIFS ] \
+    && notifs=${NOTIFICATIONS:-/tmp/notifications-$(whoami)} \
+    || notifs=$NOTIFS
+
+inotifywait -q -e modify $notifs
+tail -F -n1 $notifs |
+    while read LINE; do
+
+        inputJson=$LINE
+        app_name=$(echo $inputJson | jq -r '.app_name')
+        app_icon=$(echo $inputJson | jq -r '.app_icon')
+        replaces_id=$(echo $inputJson | jq -r '.replaces_id')
+        timeout=$(echo $inputJson | jq -r '.timeout')
+        hints=$(echo $inputJson | jq -r '.hints')
+        actions=$(echo $inputJson | jq -r '.actions')
+        summary=$(echo $inputJson | jq -r '.summary')
+        body=$(echo $inputJson | jq -r '.body')
+
+        for i in $(seq 0 $(( $(echo $rules | jq -r 'length') - 1 )) ); do
+
+            rule=$(echo $rules | jq ".[${i}]")
+            cmds=$(echo $rule | jq -r ".cmds")
+            filtersJson=$(echo $rule | jq --sort-keys ".filters")
+
+            commJson=$(cat \
+                <(echo $filtersJson | gron ) \
+                <(echo $inputJson | gron ) |
+                sort | uniq -d | gron -u)
+
+            if [ "$commJson" == "$filtersJson" ]; then
+
+                for j in $(seq 0 $(( $(echo $cmds | jq 'length') - 1 )) ); do
+                    cmd=$(echo $cmds | jq -r ".[${j}]")
+                    eval $cmd
+                done
+
+            fi
+
+        done
+    done

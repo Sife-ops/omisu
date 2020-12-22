@@ -1,0 +1,130 @@
+.
+.TH OMISU "1" "December 2020" "omisu" "User Commands"
+.\" http://bugs.debian.org/507673
+.\" http://lists.gnu.org/archive/html/groff/2009-02/msg00013.html
+.ie \n(.g .ds Aq \(aq
+.el       .ds Aq '
+.nh
+.ad l
+.SH NAME
+omisu \- Simple event handler for desktop notifications.
+.SH SYNOPSIS
+.sp
+\fBomisu\fR [\fIOPTIONS\fR\&]
+.SH DESCRIPTION
+.sp
+omisu is a simple event handler for desktop notifications.
+.SH OPTIONS
+.PP
+\fB\-h\fR
+.RS 4
+Print help message to standard output and exit\&.
+.RE
+.PP
+\fB\-i\fR \fINOTIFSFILE\fR
+.RS 4
+Use an alternative notifications file\&.
+.RE
+.PP
+\fB\-r\fR \fIRULESFILE\fR
+.RS 4
+Use an alterntive rules file\&.
+.RE
+.SH BEHAVIOR
+.sp
+\fBomisu\fR is a daemon that listens to desktop notifications and executes commands\&.
+.sp
+It reads notifications from \fB/tmp/notifications-$(whoami)\fR by default, the file defined
+by the NOTIFICATIONS environment variable, or from the
+given file if the \fI-i\fR option is used\&.
+.sp
+It then executes the commands in \fB$XDG_CONFIG_HOME/omisu/rules.json\fR, or in the
+given file if the \fI-r\fR option is used\&.
+.\" .sp
+.\" If omisu receieves a \fISIGUSR1\fR signal, it will reload its configuration file\&.
+.SH CONFIGURATION
+.sp
+The \fBrules.json\fR file is interpreted as so:
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+"filters" are the conditions for runnings commands\&.
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+"cmds" are the commands run when filter conditions are met\&.
+.RE
+.sp
+General syntax:
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+[
+    {
+        "cmds": [
+            "COMMAND_1",
+            "COMMAND_2",
+            ... ,
+            "COMMAND_n"
+        ]
+        "filters": {
+            "KEY_1": "VALUE_1",
+            "KEY_2": "VALUE_2",
+            ... ,
+            "KEY_n": "VALUE_n",
+        }
+    }
+]
+.fi
+.if n \{\
+.RE
+.\}
+.sp
+The following notification values can be passed as shell variables to commands from
+the \fBrules.json\fR file: \fIapp_name, app_icon, replaces_id, timeout, actions,
+summary, body\fP.
+.sp
+The following is an example of a \fBrules.json\fR where tmux displays the
+value of .body for all notifications, and plays a sound for only discord
+messages from the user named "rms53":
+.sp
+.if n .RS 4
+.nf
+[
+    {
+        "cmds": [
+            "tmux display-message \\"$body\\""
+        ],
+        "filters": {}
+    },
+    {
+        "cmds": [
+            "mpv ~/mycoolsound.wav"
+        ],
+        "filters": {
+            "app_name:" "discord"
+            "summary:" "rms53"
+        }
+    }
+]
+.fi
+.if n .RE
+.SH AUTHOR
+.sp
+Wyatt Goettsch <wyattgoettsch at gmx.us>
+
