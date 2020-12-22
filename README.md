@@ -44,8 +44,8 @@ Simple event handler for desktop notifications.
 
 ### Manual
 
-1. Download `omisu`.
 <!-- Release: https://github.com/Sife-ops/omisu/releases/latest -->
+1. Download `omisu`.
     - Git: `git clone https://github.com/Sife-ops/omisu`
 2. Change working directory to `omisu`.
     - `cd omisu`
